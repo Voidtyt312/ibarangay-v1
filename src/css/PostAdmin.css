@@ -396,10 +396,17 @@
 }
 
 .file-input-wrapper:hover .file-input-label {
-    border-color: #3862ff;
-    background: #f0f4ff;
-    color: #3862ff;
-}
+     border-color: #3862ff;
+     background: #f0f4ff;
+     color: #3862ff;
+ }
+
+ .file-input-wrapper.drag-over .file-input-label {
+     border-color: #3862ff;
+     background: #e8ecff;
+     color: #3862ff;
+     border-style: solid;
+ }
 
 .file-input-wrapper input[type="file"]:focus+.file-input-label {
     border-color: #3862ff;

@@ -167,10 +167,92 @@ function PostAdmin({ onLogout, onNavigate }) {
     const handleChange = (e) => {
         const { name, value, files } = e.target;
         if (name === 'image') {
-            setFormData((prev) => ({ ...prev, image: files[0] }));
+            if (files && files[0]) {
+                compressAndSetImage(files[0]);
+            }
         } else {
             setFormData((prev) => ({ ...prev, [name]: value }));
         }
+    };
+
+    const handleFileInputClick = (e) => {
+        e.preventDefault();
+        document.getElementById('post-image')?.click();
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        e.currentTarget.classList.add('drag-over');
+    };
+
+    const handleDragLeave = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        e.currentTarget.classList.remove('drag-over');
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        e.currentTarget.classList.remove('drag-over');
+        
+        const files = e.dataTransfer?.files;
+        if (files && files[0]) {
+            compressAndSetImage(files[0]);
+        }
+    };
+
+    const compressAndSetImage = (file) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+
+                // Resize to max 800x800
+                const maxSize = 800;
+                if (width > height) {
+                    if (width > maxSize) {
+                        height = Math.round((height * maxSize) / width);
+                        width = maxSize;
+                    }
+                } else {
+                    if (height > maxSize) {
+                        width = Math.round((width * maxSize) / height);
+                        height = maxSize;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // Convert to base64 JPEG with 70% quality
+                const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                
+                // Convert base64 to Blob for form submission
+                const arr = compressedDataUrl.split(',');
+                const mime = arr[0].match(/:(.*?);/)[1];
+                const bstr = atob(arr[1]);
+                const n = bstr.length;
+                const u8arr = new Uint8Array(n);
+                for (let i = 0; i < n; i++) {
+                    u8arr[i] = bstr.charCodeAt(i);
+                }
+                const compressedBlob = new Blob([u8arr], { type: mime });
+                
+                // Create a File object with the original filename
+                const compressedFile = new File([compressedBlob], file.name, { type: mime });
+                setFormData((prev) => ({ ...prev, image: compressedFile }));
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
     };
 
 
@@ -315,38 +397,49 @@ function PostAdmin({ onLogout, onNavigate }) {
                             </div>
 
                             <div className="form-group">
-                                <label htmlFor="post-image">Image (Optional)</label>
-                                <div className="file-input-wrapper">
-                                    <input
-                                        id="post-image"
-                                        type="file"
-                                        name="image"
-                                        accept="image/*"
-                                        onChange={handleChange}
-                                    />
-                                    {formData.image ? (
-                                        <div className="file-preview">
-                                            <img src={URL.createObjectURL(formData.image)} alt="Preview" />
-                                            <div className="file-info">
-                                                <p className="file-name">{formData.image.name}</p>
-                                                <p className="file-size">({(formData.image.size / 1024).toFixed(2)} KB)</p>
-                                            </div>
-                                            <button
-                                                type="button"
-                                                className="remove-file-btn"
-                                                onClick={() => setFormData({ ...formData, image: null })}
-                                                aria-label="Remove image"
-                                            >
-                                                ✕
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <span className="file-input-label">
-                                            📷 Click to upload or drag image here
-                                        </span>
-                                    )}
-                                </div>
-                            </div>
+                                 <label htmlFor="post-image">Image (Optional)</label>
+                                 <div 
+                                     className="file-input-wrapper"
+                                     onDragOver={handleDragOver}
+                                     onDragLeave={handleDragLeave}
+                                     onDrop={handleDrop}
+                                 >
+                                     <input
+                                         id="post-image"
+                                         type="file"
+                                         name="image"
+                                         accept="image/*"
+                                         onChange={handleChange}
+                                     />
+                                     {formData.image ? (
+                                         <div className="file-preview">
+                                             <img src={URL.createObjectURL(formData.image)} alt="Preview" />
+                                             <div className="file-info">
+                                                 <p className="file-name">{formData.image.name}</p>
+                                                 <p className="file-size">({(formData.image.size / 1024).toFixed(2)} KB)</p>
+                                             </div>
+                                             <button
+                                                 type="button"
+                                                 className="remove-file-btn"
+                                                 onClick={() => setFormData({ ...formData, image: null })}
+                                                 aria-label="Remove image"
+                                             >
+                                                 ✕
+                                             </button>
+                                         </div>
+                                     ) : (
+                                         <div 
+                                             className="file-input-label"
+                                             onClick={handleFileInputClick}
+                                             role="button"
+                                             tabIndex="0"
+                                             onKeyDown={(e) => e.key === 'Enter' && handleFileInputClick(e)}
+                                         >
+                                             📷 Click to upload or drag image here
+                                         </div>
+                                     )}
+                                 </div>
+                             </div>
 
                             <div className="post-modal-actions">
                                 <button

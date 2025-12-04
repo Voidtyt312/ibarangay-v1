@@ -54,13 +54,13 @@
 }
 
 .chart-y-axis {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding-right: 12px;
-  min-width: 35px;
-  height: 240px;
-}
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+   padding-right: 12px;
+   min-width: 35px;
+   height: 180px;
+ }
 
 .y-axis-label {
   font-size: 0.7rem;
@@ -74,14 +74,14 @@
 }
 
 .chart-content {
-  flex: 1;
-  display: flex;
-  align-items: flex-end;
-  position: relative;
-  height: 240px;
-  border-left: 2px solid #e2e8f0;
-  border-bottom: 2px solid #e2e8f0;
-}
+   flex: 1;
+   display: flex;
+   align-items: flex-end;
+   position: relative;
+   height: 180px;
+   border-left: 2px solid #e2e8f0;
+   border-bottom: 2px solid #e2e8f0;
+ }
 
 .chart-bars {
   display: flex;
@@ -162,8 +162,8 @@
   }
 
   .chart-content {
-    height: 200px;
-  }
+     height: 150px;
+   }
 
   .chart-bars {
     gap: 6px;
@@ -188,7 +188,7 @@
   }
 
   .chart-y-axis {
-    height: 200px;
+    height: 150px;
     min-width: 30px;
   }
 }
