@@ -48,7 +48,9 @@ function ConcernUser({ onLogout, onNavigate }) {
         setLoading(true);
         setApiError(null);
         const response = await getConcerns();
-        const transformedConcerns = response.data.map((concern) => ({
+        // Filter to only show current user's concerns
+        const userConcerns = response.data.filter(concern => concern.UserID === userId);
+        const transformedConcerns = userConcerns.map((concern) => ({
           id: concern.ConcernID,
           title: concern.Description?.substring(0, 50) + '...',
           category: concern.ConcernType,
@@ -78,18 +80,21 @@ function ConcernUser({ onLogout, onNavigate }) {
               : []),
           ],
           userReplyCount: 0,
-        }));
-        setConcerns(transformedConcerns);
-      } catch (error) {
-        console.error('Error fetching concerns:', error);
-        setApiError('Failed to load your concerns. Please try again.');
-      } finally {
-        setLoading(false);
-      }
-    };
+          userId: concern.UserID,
+          }));
+          setConcerns(transformedConcerns);
+          } catch (error) {
+          console.error('Error fetching concerns:', error);
+          setApiError('Failed to load your concerns. Please try again.');
+          } finally {
+          setLoading(false);
+          }
+          };
 
-    fetchConcerns();
-  }, [fetchRetry]);
+          if (userId) {
+          fetchConcerns();
+          }
+          }, [fetchRetry, userId]);
 
   const handleRetryFetch = () => {
     setFetchRetry((prev) => prev + 1);
@@ -496,7 +501,7 @@ function ConcernUser({ onLogout, onNavigate }) {
             </form>
           </div>
         ) : (
-           <div className="my-concerns">
+          <div className="my-concerns">
              {apiError && (
                <div style={{ marginBottom: '20px' }}>
                  <ErrorAlert 
@@ -682,10 +687,10 @@ function ConcernUser({ onLogout, onNavigate }) {
               </div>
             )}
           </div>
-        )}
-      </main>
-    </div>
-  );
-}
+          )}
+          </main>
+          </div>
+          );
+          }
 
-export default ConcernUser;
+          export default ConcernUser;

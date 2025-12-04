@@ -299,6 +299,7 @@ function PostAdmin({ onLogout, onNavigate }) {
                                     BarangayName: post.BarangayName,
                                     category: post.Category,
                                     content: post.Content,
+                                    title: post.Title,
                                     timestamp: new Date(post.CreatedAt).toLocaleDateString('en-US', {
                                         year: 'numeric',
                                         month: 'short',
@@ -309,6 +310,7 @@ function PostAdmin({ onLogout, onNavigate }) {
                                     likes: post.ReactionCount || 0,
                                     comments: post.CommentCount || 0,
                                     image: post.Image ? (typeof post.Image === 'string' && post.Image.startsWith('data:') ? post.Image : `data:image/jpeg;base64,${post.Image}`) : null,
+                                    OfficialID: post.OfficialID,
                                 }}
                                 onLike={({ id, liked, likes }) => {
                                     setPosts((prev) =>
@@ -324,6 +326,16 @@ function PostAdmin({ onLogout, onNavigate }) {
                                 }}
                                 onShare={({ id, platform }) => {
                                     // Share functionality
+                                }}
+                                onDelete={({ id, updated }) => {
+                                    if (updated) {
+                                        fetchPosts();
+                                        setSuccessMessage('Post updated successfully!');
+                                    } else {
+                                        setPosts((prev) => prev.filter((p) => p.PostID !== id));
+                                        setSuccessMessage('Post deleted successfully!');
+                                    }
+                                    setTimeout(() => setSuccessMessage(''), 3000);
                                 }}
                             />
                         ))}

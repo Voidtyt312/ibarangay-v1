@@ -253,7 +253,84 @@ app.post('/api/posts', upload.single('Image'), async (req, res) => {
     }
 });
 
+// UPDATE endpoint for posts
+app.put('/api/posts/:id', upload.single('Image'), async (req, res) => {
+    let connection;
+    try {
+        const { id } = req.params;
+        const { Title, Content, Category } = req.body;
+        
+        if (!Content || Content.trim() === '') {
+            return res.status(400).json({ error: 'Content is required' });
+        }
+        
+        connection = await pool.getConnection();
+        
+        // Get current post to check if image exists
+        const [currentPost] = await connection.query(
+            'SELECT Image FROM post WHERE PostID = ?',
+            [id]
+        );
+        
+        if (currentPost.length === 0) {
+            connection.release();
+            return res.status(404).json({ error: 'Post not found' });
+        }
+        
+        let imageData = currentPost[0].Image;
+        
+        // If new image is uploaded, use it; otherwise keep existing
+        if (req.file) {
+            imageData = req.file.buffer;
+        }
+        
+        const [result] = await connection.query(
+            'UPDATE post SET Title = ?, Content = ?, Category = ?, Image = ?, UpdatedAt = NOW() WHERE PostID = ?',
+            [Title || '', Content, Category || 'announcement', imageData, id]
+        );
+        
+        connection.release();
+        
+        if (result.affectedRows > 0) {
+            console.log(`✅ Post updated successfully: ${id}`);
+            res.json({ success: true, message: 'Post updated successfully' });
+        } else {
+            res.status(404).json({ error: 'Post not found' });
+        }
+    } catch (error) {
+        if (connection) connection.release();
+        console.error('❌ Error updating post:', error.message);
+        res.status(500).json({ error: error.message });
+    }
+});
 
+// DELETE endpoint for posts
+app.delete('/api/posts/:id', async (req, res) => {
+    let connection;
+    try {
+        const { id } = req.params;
+        
+        connection = await pool.getConnection();
+        
+        const [result] = await connection.query(
+            'DELETE FROM post WHERE PostID = ?',
+            [id]
+        );
+        
+        connection.release();
+        
+        if (result.affectedRows > 0) {
+            console.log(`✅ Post deleted successfully: ${id}`);
+            res.json({ success: true, message: 'Post deleted successfully' });
+        } else {
+            res.status(404).json({ error: 'Post not found' });
+        }
+    } catch (error) {
+        if (connection) connection.release();
+        console.error('❌ Error deleting post:', error.message);
+        res.status(500).json({ error: error.message });
+    }
+});
 
 app.get('/api/concerns', async (req, res) => {
     try {

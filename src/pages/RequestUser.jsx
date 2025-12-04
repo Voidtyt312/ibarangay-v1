@@ -49,7 +49,9 @@ function RequestUser({ onLogout, onNavigate }) {
         setLoading(true);
         setApiError(null);
         const response = await getDocumentRequests();
-        const transformedRequests = response.data.map((req) => ({
+        // Filter to only show current user's requests
+        const userRequests = response.data.filter(req => req.UserID === userId);
+        const transformedRequests = userRequests.map((req) => ({
           id: req.DocumentRequestID,
           documentType: req.DocumentType,
           referenceNo: req.DocumentRequestID,
@@ -57,6 +59,7 @@ function RequestUser({ onLogout, onNavigate }) {
           requestDate: new Date(req.DateRequested).toLocaleDateString(),
           completionDate: null,
           status: req.Status || 'pending',
+          userId: req.UserID,
         }));
         setRequests(transformedRequests);
       } catch (error) {
@@ -67,8 +70,10 @@ function RequestUser({ onLogout, onNavigate }) {
       }
     };
 
-    fetchRequests();
-  }, [fetchRetry]);
+    if (userId) {
+      fetchRequests();
+    }
+  }, [fetchRetry, userId]);
 
   const handleRetryFetch = () => {
     setFetchRetry((prev) => prev + 1);
@@ -464,7 +469,7 @@ function RequestUser({ onLogout, onNavigate }) {
             </form>
           </div>
         ) : (
-           <div className="my-requests">
+          <div className="my-requests">
              {apiError && (
                <div style={{ marginBottom: '20px' }}>
                  <ErrorAlert 
@@ -536,11 +541,11 @@ function RequestUser({ onLogout, onNavigate }) {
               </div>
             )}
           </div>
-        )}
-      </main>
-    </div>
-  );
-}
+          )}
+          </main>
+          </div>
+          );
+          }
 
-export default RequestUser;
+          export default RequestUser;
 
