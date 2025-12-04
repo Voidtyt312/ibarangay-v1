@@ -153,11 +153,17 @@ function WeatherWidget({ location = null }) {
           <div className="weather-details">
             <p className="condition">{weather.current.condition}</p>
             <p className="meta">{weather.location}</p>
-            <div className="stats">
-              <span className="stat">💧 {weather.current.humidity}%</span>
-              <span className="stat">💨 {weather.current.windSpeed} km/h</span>
-            </div>
           </div>
+        </div>
+        <div className="stats">
+          <span className="stat">
+            <span className="stat-icon">💧</span>
+            <span className="stat-label">Humidity: {weather.current.humidity}%</span>
+          </span>
+          <span className="stat">
+            <span className="stat-icon">💨</span>
+            <span className="stat-label">Wind: {weather.current.windSpeed} km/h</span>
+          </span>
         </div>
       </div>
 
