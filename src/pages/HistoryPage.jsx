@@ -30,44 +30,87 @@ function HistoryPage({ userType = 'user', onLogout, onNavigate }) {
           return;
         }
 
-        // Fetch user's requests
-        const requestsRes = await fetch(`http://localhost:3001/api/document-requests`);
-        if (requestsRes.ok) {
-          const allRequests = await requestsRes.json();
-          const userRequests = allRequests.filter(
-            (req) => req.UserID === userId && (req.Status === 'completed' || req.Status === 'cancelled')
-          );
-          const transformedRequests = userRequests.map((req) => ({
-            id: req.DocumentRequestID,
-            documentType: req.DocumentType,
-            purpose: req.Purpose,
-            requestDate: new Date(req.DateRequested).toLocaleDateString(),
-            status: req.Status?.toLowerCase() || 'pending',
-            completedDate: req.DateCompleted ? new Date(req.DateCompleted).toLocaleDateString() : null,
-          }));
-          setRequests(transformedRequests);
+        if (userType === 'admin') {
+          // Admin fetches history for their barangay
+          if (adminBarangayInfo?.barangayId) {
+            // Fetch requests for admin's barangay
+            const requestsRes = await fetch(`http://localhost:3001/api/document-requests/barangay/${adminBarangayInfo.barangayId}`);
+            if (requestsRes.ok) {
+              const allRequests = await requestsRes.json();
+              const historyRequests = allRequests.filter(
+                (req) => req.Status === 'done' || req.Status === 'cancelled'
+              );
+              const transformedRequests = historyRequests.map((req) => ({
+                id: req.DocumentRequestID,
+                documentType: req.DocumentType,
+                purpose: req.Purpose,
+                requestDate: new Date(req.DateRequested).toLocaleDateString(),
+                status: req.Status?.toLowerCase() || 'pending',
+                userId: req.UserID,
+                completedDate: req.DateCompleted ? new Date(req.DateCompleted).toLocaleDateString() : null,
+              }));
+              setRequests(transformedRequests);
+            }
+
+            // Fetch concerns for admin's barangay
+            const concernsRes = await fetch(`http://localhost:3001/api/concerns/barangay/${adminBarangayInfo.barangayId}`);
+            if (concernsRes.ok) {
+              const allConcerns = await concernsRes.json();
+              const historyConcerns = allConcerns.filter(
+                (concern) => concern.Status === 'resolved' || concern.Status === 'cancelled'
+              );
+              const transformedConcerns = historyConcerns.map((concern) => ({
+                id: concern.ConcernID,
+                reference: concern.ConcernID,
+                category: concern.ConcernType,
+                description: concern.Description,
+                submittedDate: new Date(concern.DateReported).toLocaleDateString(),
+                status: concern.Status?.toLowerCase() || 'pending',
+                userId: concern.UserID,
+                resolvedDate: concern.DateResolved ? new Date(concern.DateResolved).toLocaleDateString() : null,
+              }));
+              setConcerns(transformedConcerns);
+            }
+          }
+        } else {
+          // User fetches their own history
+          // Fetch user's requests
+          const requestsRes = await fetch(`http://localhost:3001/api/document-requests`);
+          if (requestsRes.ok) {
+            const allRequests = await requestsRes.json();
+            const userRequests = allRequests.filter(
+              (req) => req.UserID === userId && (req.Status === 'done' || req.Status === 'cancelled')
+            );
+            const transformedRequests = userRequests.map((req) => ({
+              id: req.DocumentRequestID,
+              documentType: req.DocumentType,
+              purpose: req.Purpose,
+              requestDate: new Date(req.DateRequested).toLocaleDateString(),
+              status: req.Status?.toLowerCase() || 'pending',
+              completedDate: req.DateCompleted ? new Date(req.DateCompleted).toLocaleDateString() : null,
+            }));
+            setRequests(transformedRequests);
+          }
+
+          // Fetch user's concerns
+          const concernsRes = await fetch(`http://localhost:3001/api/concerns`);
+          if (concernsRes.ok) {
+            const allConcerns = await concernsRes.json();
+            const userConcerns = allConcerns.filter(
+              (concern) => concern.UserID === userId && (concern.Status === 'resolved' || concern.Status === 'cancelled')
+            );
+            const transformedConcerns = userConcerns.map((concern) => ({
+              id: concern.ConcernID,
+              reference: concern.ConcernID,
+              category: concern.ConcernType,
+              description: concern.Description,
+              submittedDate: new Date(concern.DateReported).toLocaleDateString(),
+              status: concern.Status?.toLowerCase() || 'pending',
+              resolvedDate: concern.DateResolved ? new Date(concern.DateResolved).toLocaleDateString() : null,
+            }));
+            setConcerns(transformedConcerns);
+          }
         }
-
-        // Fetch user's concerns
-        const concernsRes = await fetch(`http://localhost:3001/api/concerns`);
-        if (concernsRes.ok) {
-          const allConcerns = await concernsRes.json();
-          const userConcerns = allConcerns.filter(
-            (concern) => concern.UserID === userId && (concern.Status === 'resolved' || concern.Status === 'cancelled')
-          );
-          const transformedConcerns = userConcerns.map((concern) => ({
-            id: concern.ConcernID,
-            reference: concern.ConcernID,
-            category: concern.ConcernType,
-            description: concern.Description,
-            submittedDate: new Date(concern.DateReported).toLocaleDateString(),
-            status: concern.Status?.toLowerCase() || 'pending',
-            resolvedDate: concern.DateResolved ? new Date(concern.DateResolved).toLocaleDateString() : null,
-          }));
-          setConcerns(transformedConcerns);
-        }
-
-
       } catch (err) {
         console.error('Failed to fetch history data:', err);
       } finally {
@@ -76,7 +119,7 @@ function HistoryPage({ userType = 'user', onLogout, onNavigate }) {
     };
 
     fetchHistoryData();
-  }, []);
+  }, [userType, adminBarangayInfo]);
 
   const handleNavigate = (itemId) => {
     setActiveNav(itemId);

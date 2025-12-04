@@ -6,7 +6,7 @@ function History({ userType = 'user', requests = [], concerns = [] }) {
 
   // Filter requests and concerns based on status
   const finishedRequests = requests.filter(
-    (req) => req.status === 'completed' || req.status === 'cancelled' || req.status === 'ready-to-pickup'
+    (req) => req.status === 'done' || req.status === 'cancelled'
   );
   const finishedConcerns = concerns.filter(
     (concern) => concern.status === 'resolved' || concern.status === 'cancelled'

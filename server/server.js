@@ -978,14 +978,27 @@ app.put('/api/document-requests/:requestId', async (req, res) => {
             return res.status(400).json({ error: 'Cannot change status of a cancelled request' });
         }
         
-        if ((status === 'ready' || status === 'done') && currentStatus !== 'approved') {
-            connection.release();
-            return res.status(400).json({ error: `Cannot mark as ${status} - request must be approved first` });
-        }
+        // Enforce workflow: pending → approved → ready → done
+        // Allowed transitions:
+        // pending → approved
+        // pending → cancelled
+        // approved → ready
+        // approved → cancelled
+        // ready → done
+        // ready → cancelled (optional, if you want to allow cancellation at this stage)
+        // done, cancelled → no changes allowed
         
-        if (status === 'approved' && currentStatus === 'cancelled') {
+        const allowedTransitions = {
+            'pending': ['approved', 'cancelled'],
+            'approved': ['ready', 'cancelled'],
+            'ready': ['done', 'cancelled'],
+            'done': [],
+            'cancelled': []
+        };
+        
+        if (!allowedTransitions[currentStatus] || !allowedTransitions[currentStatus].includes(status)) {
             connection.release();
-            return res.status(400).json({ error: 'Cannot approve a cancelled request' });
+            return res.status(400).json({ error: `Cannot change status from '${currentStatus}' to '${status}'` });
         }
         
         await connection.query(

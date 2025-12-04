@@ -18,8 +18,10 @@ const DOCUMENT_TYPES = [
 
 const STATUS_OPTIONS = {
   pending: { label: 'Pending', color: '#f59e0b' },
+  approved: { label: 'Approved', color: '#3b82f6' },
   ready: { label: 'Ready', color: '#10b981' },
-  processing: { label: 'Processing', color: '#3b82f6' },
+  done: { label: 'Done', color: '#059669' },
+  cancelled: { label: 'Cancelled', color: '#ef4444' },
 };
 
 function RequestUser({ onLogout, onNavigate }) {

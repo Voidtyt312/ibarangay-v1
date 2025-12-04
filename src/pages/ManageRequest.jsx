@@ -245,16 +245,16 @@ function ManageRequest({ onLogout, onNavigate }) {
               <button 
                 className="btn-approved" 
                 onClick={handleApprove}
-                disabled={selectedRequest?.Status === 'cancelled' || selectedRequest?.Status === 'approved'}
-                title={selectedRequest?.Status === 'cancelled' ? 'Cannot approve a cancelled request' : selectedRequest?.Status === 'approved' ? 'Request already approved' : 'Approve this request'}
+                disabled={selectedRequest?.Status !== 'pending' || selectedRequest?.Status === 'cancelled'}
+                title={selectedRequest?.Status === 'pending' ? 'Approve this request' : selectedRequest?.Status === 'cancelled' ? 'Cannot approve a cancelled request' : 'Request must be pending to approve'}
               >
-                Approved
+                Approve
               </button>
               <button 
                 className="btn-ready-pickup" 
                 onClick={handleReadyToPickup}
-                disabled={selectedRequest?.Status !== 'approved' || selectedRequest?.Status === 'cancelled'}
-                title={selectedRequest?.Status === 'cancelled' ? 'Cannot mark cancelled request as ready' : selectedRequest?.Status !== 'approved' ? 'Request must be approved first' : 'Mark as ready for pickup'}
+                disabled={selectedRequest?.Status !== 'approved'}
+                title={selectedRequest?.Status === 'approved' ? 'Mark as ready for pickup' : 'Request must be approved first'}
               >
                 Ready to Pickup
               </button>
@@ -277,8 +277,8 @@ function ManageRequest({ onLogout, onNavigate }) {
                     setLoading(false);
                   }
                 }}
-                disabled={selectedRequest?.Status !== 'approved' || selectedRequest?.Status === 'cancelled'}
-                title={selectedRequest?.Status === 'cancelled' ? 'Cannot mark cancelled request as done' : selectedRequest?.Status !== 'approved' ? 'Request must be approved first' : 'Mark request as done'}
+                disabled={selectedRequest?.Status !== 'ready'}
+                title={selectedRequest?.Status === 'ready' ? 'Mark request as done' : 'Request must be ready for pickup first'}
               >
                 Done
               </button>

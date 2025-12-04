@@ -84,6 +84,112 @@
   font-size: 0.9rem;
 }
 
+.barangay-admin-contact {
+  margin-bottom: 32px;
+}
+
+.admin-card {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  border-radius: 16px;
+  padding: 24px;
+  color: #ffffff;
+  box-shadow: 0 12px 40px rgba(5, 150, 105, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 50px rgba(5, 150, 105, 0.3);
+}
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.admin-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.admin-icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.admin-title h2 {
+  margin: 0 0 4px;
+  font-size: 1.5rem;
+  color: #ffffff;
+}
+
+.admin-title p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.95rem;
+}
+
+.admin-details {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.detail-label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+.detail-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.admin-call-btn {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 28px;
+  background: #ffffff;
+  color: #059669;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  white-space: nowrap;
+}
+
+.admin-call-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  background: #f0fdf4;
+}
+
+.admin-call-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
 .barangay-contacts,
 .national-contacts {
   margin-bottom: 32px;
@@ -322,6 +428,32 @@
 
   .emergency-header h1 {
     font-size: 1.5rem;
+  }
+
+  .admin-card {
+    padding: 16px;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .admin-details {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .detail-item {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .admin-call-btn {
+    width: 100%;
+    justify-content: center;
   }
 
   .contact-grid {
