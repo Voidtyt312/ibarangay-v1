@@ -18,8 +18,6 @@ function ManageConcern({ onLogout, onNavigate }) {
     AdminRemarks: '',
   });
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [dateRange, setDateRange] = useState('');
   const [replyText, setReplyText] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -71,8 +69,8 @@ function ManageConcern({ onLogout, onNavigate }) {
     const matchesSearch =
       (concern.ConcernID || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
       (concern.UserID || '').toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || (concern.Status || '').toLowerCase() === statusFilter;
-    return matchesSearch && matchesStatus;
+    const isActive = concern.Status !== 'resolved' && concern.Status !== 'cancelled';
+    return matchesSearch && isActive;
   });
 
   const getStatusClass = (status) => {
@@ -156,76 +154,51 @@ function ManageConcern({ onLogout, onNavigate }) {
               />
             </div>
 
-            <div className="filters-row">
-              <div className="filter-group">
-                <label>Status:</label>
-                <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-                  <option value="all">All</option>
-                  <option value="new">New</option>
-                  <option value="in-progress">In Progress</option>
-                  <option value="resolved">Resolved</option>
-                </select>
-              </div>
 
-              <div className="filter-group">
-                <label>Date Range:</label>
-                <input
-                  type="text"
-                  placeholder="Select date range"
-                  value={dateRange}
-                  onChange={(e) => setDateRange(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="status-legend">
-              <div className="legend-item">
-                <span className="legend-color status-new"></span>
-                <span>Blue: New</span>
-              </div>
-              <div className="legend-item">
-                <span className="legend-color status-in-progress"></span>
-                <span>Yellow: In Progress</span>
-              </div>
-              <div className="legend-item">
-                <span className="legend-color status-resolved"></span>
-                <span>Green: Resolved</span>
-              </div>
-            </div>
           </div>
 
-          <div className="concerns-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Reference#</th>
-                  <th>Citizen Name</th>
-                  <th>Category</th>
-                  <th>Status</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredConcerns.map((concern) => (
-                   <tr
-                     key={concern.ConcernID}
-                     className={`${selectedConcern?.ConcernID === concern.ConcernID ? 'selected' : ''} ${getStatusClass(concern.Status)}`}
-                     onClick={() => setSelectedConcern(concern)}
-                   >
-                     <td>{concern.ConcernID}</td>
-                     <td>{concern.UserID}</td>
-                     <td>{concern.ConcernType}</td>
-                     <td>
-                       <span className={`status-badge ${getStatusClass(concern.Status)}`}>
-                         {getStatusLabel(concern.Status)}
-                       </span>
-                     </td>
-                     <td>{new Date(concern.DateReported).toLocaleDateString()}</td>
-                   </tr>
-                 ))}
-              </tbody>
-            </table>
-          </div>
+          {filteredConcerns.length === 0 ? (
+            <div className="empty-state">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+              <h3>No active concerns found</h3>
+              <p>{searchQuery ? 'Try adjusting your search' : 'No active concerns. Resolved concerns are in History.'}</p>
+            </div>
+          ) : (
+            <div className="concerns-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Reference#</th>
+                    <th>Citizen Name</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredConcerns.map((concern) => (
+                     <tr
+                       key={concern.ConcernID}
+                       className={`${selectedConcern?.ConcernID === concern.ConcernID ? 'selected' : ''} ${getStatusClass(concern.Status)}`}
+                       onClick={() => setSelectedConcern(concern)}
+                     >
+                       <td>{concern.ConcernID}</td>
+                       <td>{concern.UserID}</td>
+                       <td>{concern.ConcernType}</td>
+                       <td>
+                         <span className={`status-badge ${getStatusClass(concern.Status)}`}>
+                           {getStatusLabel(concern.Status)}
+                         </span>
+                       </td>
+                       <td>{new Date(concern.DateReported).toLocaleDateString()}</td>
+                     </tr>
+                   ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
 
         <div className="concern-details-section">

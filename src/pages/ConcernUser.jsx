@@ -516,11 +516,14 @@ function ConcernUser({ onLogout, onNavigate }) {
                <div className="empty-state">
                  <LoadingSpinner label="Loading your concerns..." />
                </div>
-             ) : concerns.length === 0 ? (
-               <div className="empty-state">
-                 <p>No concerns submitted yet. Submit a new concern to get started.</p>
-               </div>
-             ) : selectedConcern ? (
+             ) : (
+               (() => {
+                 const activeConcerns = concerns.filter(concern => concern.status !== 'resolved' && concern.status !== 'cancelled');
+                 return activeConcerns.length === 0 && !selectedConcern ? (
+                   <div className="empty-state">
+                     <p>No active concerns. Submit a new concern to get started.</p>
+                   </div>
+                 ) : selectedConcern ? (
               <div className="concern-detail-view">
                 <button className="back-button" onClick={() => setSelectedConcern(null)}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -625,7 +628,7 @@ function ConcernUser({ onLogout, onNavigate }) {
               </div>
             ) : (
               <div className="concern-cards">
-                {concerns.map((concern) => (
+                {activeConcerns.map((concern) => (
                   <div key={concern.id} className="concern-card" onClick={() => setSelectedConcern(concern)}>
                     <div className="card-left">
                       <div className="concern-icon">
@@ -683,14 +686,16 @@ function ConcernUser({ onLogout, onNavigate }) {
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-          )}
-          </main>
-          </div>
-          );
-          }
+                  ))}
+                  </div>
+                  );
+                  })()
+                  )}
+                  </div>
+                  )}
+                  </main>
+                  </div>
+                  );
+                  }
 
-          export default ConcernUser;
+                  export default ConcernUser;

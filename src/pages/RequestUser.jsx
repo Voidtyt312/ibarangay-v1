@@ -469,28 +469,31 @@ function RequestUser({ onLogout, onNavigate }) {
             </form>
           </div>
         ) : (
-          <div className="my-requests">
-             {apiError && (
-               <div style={{ marginBottom: '20px' }}>
-                 <ErrorAlert 
-                   message={apiError}
-                   type="error"
-                   onRetry={handleRetryFetch}
-                   onDismiss={() => setApiError(null)}
-                 />
-               </div>
-             )}
-             {loading ? (
-               <div className="empty-state">
-                 <LoadingSpinner label="Loading your requests..." />
-               </div>
-             ) : requests.length === 0 ? (
-              <div className="empty-state">
-                <p>No requests yet. Submit a new request to get started.</p>
-              </div>
-            ) : (
-              <div className="request-cards">
-                {requests.map((request) => (
+           <div className="my-requests">
+              {apiError && (
+                <div style={{ marginBottom: '20px' }}>
+                  <ErrorAlert 
+                    message={apiError}
+                    type="error"
+                    onRetry={handleRetryFetch}
+                    onDismiss={() => setApiError(null)}
+                  />
+                </div>
+              )}
+              {loading ? (
+                <div className="empty-state">
+                  <LoadingSpinner label="Loading your requests..." />
+                </div>
+              ) : (
+                (() => {
+                  const activeRequests = requests.filter(req => req.status !== 'done' && req.status !== 'cancelled');
+                  return activeRequests.length === 0 ? (
+                    <div className="empty-state">
+                      <p>No active requests. Submit a new request to get started.</p>
+                    </div>
+                  ) : (
+                    <div className="request-cards">
+                      {activeRequests.map((request) => (
                   <div key={request.id} className="request-card">
                     <div className="card-left">
                       <div className="doc-icon">
@@ -537,15 +540,17 @@ function RequestUser({ onLogout, onNavigate }) {
                       </div>
                     )}
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-          )}
-          </main>
-          </div>
-          );
-          }
+                     ))}
+                   </div>
+                  );
+                  })()
+                  )}
+                  </div>
+                  )}
+                  </main>
+                  </div>
+                  );
+                  }
 
-          export default RequestUser;
+                  export default RequestUser;
 

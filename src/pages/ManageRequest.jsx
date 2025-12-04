@@ -17,7 +17,6 @@ function ManageRequest({ onLogout, onNavigate }) {
     Status: '',
   });
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -67,7 +66,8 @@ function ManageRequest({ onLogout, onNavigate }) {
   const filteredRequests = requests.filter((req) => {
     const matchesSearch = req.DocumentRequestID?.toLowerCase().includes(searchQuery.toLowerCase()) || 
                          req.DocumentType?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesSearch;
+    const isActive = req.Status !== 'done' && req.Status !== 'cancelled';
+    return matchesSearch && isActive;
   });
 
   const handleApprove = async () => {
@@ -162,15 +162,7 @@ function ManageRequest({ onLogout, onNavigate }) {
               />
             </div>
 
-            <div className="sort-dropdown">
-              <label>Sort Document by:</label>
-              <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-                <option value="">Select Option</option>
-                <option value="date">Date</option>
-                <option value="type">Document Type</option>
-                <option value="status">Status</option>
-              </select>
-            </div>
+
           </div>
 
           {filteredRequests.length === 0 ? (
@@ -179,8 +171,8 @@ function ManageRequest({ onLogout, onNavigate }) {
                 <path d="M19 5H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Z" />
                 <path d="M3 7h18" />
               </svg>
-              <h3>No requests found</h3>
-              <p>{searchQuery ? 'Try adjusting your search' : 'No document requests for this barangay yet'}</p>
+              <h3>No active requests found</h3>
+              <p>{searchQuery ? 'Try adjusting your search' : 'No active document requests for this barangay. Completed requests are in History.'}</p>
             </div>
           ) : (
             <div className="requests-table">
