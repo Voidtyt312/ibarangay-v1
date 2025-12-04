@@ -106,11 +106,15 @@ function ManageConcern({ onLogout, onNavigate }) {
     if (!replyText.trim() || !selectedConcern) return;
     try {
       await updateConcernStatus(selectedConcern.ConcernID, 'in-progress', replyText);
-      setSelectedConcern({
+      const updatedConcern = {
         ...selectedConcern,
         AdminRemarks: replyText,
         Status: 'in-progress',
-      });
+      };
+      setSelectedConcern(updatedConcern);
+      
+      // Update the concerns array
+      setConcerns(concerns.map(c => c.ConcernID === selectedConcern.ConcernID ? updatedConcern : c));
       setReplyText('');
     } catch (err) {
       setError('Failed to send reply');
@@ -122,11 +126,24 @@ function ManageConcern({ onLogout, onNavigate }) {
     if (!selectedConcern) return;
     try {
       await updateConcernStatus(selectedConcern.ConcernID, 'resolved');
-      setSelectedConcern({
-        ...selectedConcern,
-        Status: 'resolved',
-        DateResolved: new Date(),
-      });
+      
+      // Update the concerns array to remove the resolved concern
+      const updatedConcerns = concerns.filter(c => c.ConcernID !== selectedConcern.ConcernID);
+      setConcerns(updatedConcerns);
+      
+      // Select the next concern or clear selection
+      if (updatedConcerns.length > 0) {
+        setSelectedConcern(updatedConcerns[0]);
+      } else {
+        setSelectedConcern({
+          ConcernID: '',
+          ConcernType: '',
+          Description: '',
+          Status: '',
+          DateReported: null,
+          AdminRemarks: '',
+        });
+      }
     } catch (err) {
       setError('Failed to mark as resolved');
       console.error(err);
