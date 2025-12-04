@@ -179,6 +179,21 @@
   -moz-appearance: none;
 }
 
+/* Compact select styling to match ConcernUser.css: reduces height and font-size */
+.select-wrapper select {
+  padding: 8px 12px;
+  height: 36px;
+  font-size: 0.82rem;
+  border-radius: 12px;
+}
+
+/* Smaller, muted placeholder option (disabled + hidden used in markup) */
+.select-wrapper select option[disabled][hidden],
+.select-wrapper select option[disabled] {
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
 .request-form input:focus,
 .request-form select:focus,
 .request-form textarea:focus {

@@ -178,6 +178,23 @@
   -moz-appearance: none;
 }
 
+/* Compact select styling: reduces overall height and font-size so the
+   placeholder option appears smaller. Targets the select inside the
+   .select-wrapper specifically to avoid affecting other selects. */
+.select-wrapper select {
+  padding: 8px 12px;
+  height: 36px;
+  font-size: 0.82rem;
+  border-radius: 12px;
+}
+
+/* Smaller, muted placeholder option (disabled + hidden used in markup) */
+.select-wrapper select option[disabled][hidden],
+.select-wrapper select option[disabled] {
+  font-size: 0.82rem;
+  color: #64748b;
+}
+
 .concern-form input:focus,
 .concern-form select:focus,
 .concern-form textarea:focus {
