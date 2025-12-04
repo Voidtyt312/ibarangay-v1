@@ -186,6 +186,7 @@
 
 .header-weather .stat-label {
   font-size: 0.65rem;
+  color: #000000;
 }
 
 .stats {
@@ -222,6 +223,7 @@
 .stat-label {
   font-size: 0.85rem;
   font-weight: 600;
+  color: #000000;
 }
 
 .weather-forecast {
