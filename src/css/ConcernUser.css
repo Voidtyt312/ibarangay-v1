@@ -692,6 +692,30 @@
   height: 20px;
 }
 
+.reply-section-info {
+  background: #dbeafe;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 20px;
+}
+
+.info-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  color: #1e40af;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.info-message svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
 .reply-limit-notice {
   background: #fee2e2;
   border: 1px solid #fecaca;

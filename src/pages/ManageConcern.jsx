@@ -68,11 +68,12 @@ function ManageConcern({ onLogout, onNavigate }) {
   };
 
   const filteredConcerns = concerns.filter((concern) => {
+    const isActive = concern.Status !== 'resolved' && concern.Status !== 'cancelled';
     const matchesSearch =
       (concern.ConcernID || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
       (concern.UserID || '').toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || (concern.Status || '').toLowerCase() === statusFilter;
-    return matchesSearch && matchesStatus;
+    return isActive && matchesSearch && matchesStatus;
   });
 
   const getStatusClass = (status) => {
@@ -236,13 +237,42 @@ function ManageConcern({ onLogout, onNavigate }) {
           <h3 className="concern-title">{selectedConcern?.ConcernType}</h3>
 
           <div className="concern-description">
-            <h4>Description:</h4>
+            <h4>Citizen's Concern:</h4>
             <p>{selectedConcern?.Description}</p>
             <p className="submitted-date">Submitted: {selectedConcern?.DateReported ? new Date(selectedConcern.DateReported).toLocaleString() : 'N/A'}</p>
+          </div>
+
+          <div className="messages-thread">
+            <div className="message citizen-message">
+              <div className="message-avatar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </div>
+              <div className="message-content">
+                <div className="message-header">
+                  <span className="message-sender">Citizen</span>
+                  <span className="message-time">{selectedConcern?.DateReported ? new Date(selectedConcern.DateReported).toLocaleString() : 'N/A'}</span>
+                </div>
+                <div className="message-bubble">{selectedConcern?.Description}</div>
+              </div>
+            </div>
+
             {selectedConcern?.AdminRemarks && (
-              <div className="admin-remarks">
-                <h4>Admin Remarks:</h4>
-                <p>{selectedConcern.AdminRemarks}</p>
+              <div className="message admin-message">
+                <div className="message-avatar">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  </svg>
+                </div>
+                <div className="message-content">
+                  <div className="message-header">
+                    <span className="message-sender">Admin</span>
+                    <span className="message-time">{selectedConcern?.DateResolved ? new Date(selectedConcern.DateResolved).toLocaleString() : 'N/A'}</span>
+                  </div>
+                  <div className="message-bubble">{selectedConcern.AdminRemarks}</div>
+                </div>
               </div>
             )}
           </div>
@@ -250,16 +280,17 @@ function ManageConcern({ onLogout, onNavigate }) {
           <div className="reply-section">
             <textarea
               className="reply-input"
-              placeholder="Compose reply.."
+              placeholder="Type your response to the citizen..."
               value={replyText}
               onChange={(e) => setReplyText(e.target.value)}
               rows="3"
             />
-            <button className="send-button" onClick={handleSendReply}>
+            <button className="send-button" onClick={handleSendReply} disabled={selectedConcern?.Status === 'resolved'}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <line x1="22" y1="2" x2="11" y2="13" />
                 <polygon points="22 2 15 22 11 13 2 9 22 2" />
               </svg>
+              Send Reply
             </button>
           </div>
 

@@ -65,9 +65,10 @@ function ManageRequest({ onLogout, onNavigate }) {
   };
 
   const filteredRequests = requests.filter((req) => {
+    const isActive = req.Status !== 'done' && req.Status !== 'cancelled';
     const matchesSearch = req.DocumentRequestID?.toLowerCase().includes(searchQuery.toLowerCase()) || 
                          req.DocumentType?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesSearch;
+    return isActive && matchesSearch;
   });
 
   const handleApprove = async () => {
@@ -179,8 +180,8 @@ function ManageRequest({ onLogout, onNavigate }) {
                 <path d="M19 5H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Z" />
                 <path d="M3 7h18" />
               </svg>
-              <h3>No requests found</h3>
-              <p>{searchQuery ? 'Try adjusting your search' : 'No document requests for this barangay yet'}</p>
+              <h3>No active requests</h3>
+              <p>{searchQuery ? 'Try adjusting your search' : 'All completed requests are in the history'}</p>
             </div>
           ) : (
             <div className="requests-table">

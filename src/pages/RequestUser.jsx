@@ -479,14 +479,16 @@ function RequestUser({ onLogout, onNavigate }) {
                <div className="empty-state">
                  <LoadingSpinner label="Loading your requests..." />
                </div>
-             ) : requests.length === 0 ? (
-              <div className="empty-state">
-                <p>No requests yet. Submit a new request to get started.</p>
-              </div>
-            ) : (
-              <div className="request-cards">
-                {requests.map((request) => (
-                  <div key={request.id} className="request-card">
+             ) : (() => {
+               const activeRequests = requests.filter(req => req.status !== 'done' && req.status !== 'cancelled');
+               return activeRequests.length === 0 ? (
+                <div className="empty-state">
+                  <p>No active requests. Submit a new request to get started.</p>
+                </div>
+              ) : (
+                <div className="request-cards">
+                  {activeRequests.map((request) => (
+                    <div key={request.id} className="request-card">
                     <div className="card-left">
                       <div className="doc-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -532,12 +534,13 @@ function RequestUser({ onLogout, onNavigate }) {
                       </div>
                     )}
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-      </main>
+                  ))}
+                  </div>
+                  );
+                  })()}
+                  </div>
+                  )}
+                  </main>
     </div>
   );
 }

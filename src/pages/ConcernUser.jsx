@@ -33,7 +33,6 @@ function ConcernUser({ onLogout, onNavigate }) {
   const [errors, setErrors] = useState({});
   const [concerns, setConcerns] = useState([]);
   const [selectedConcern, setSelectedConcern] = useState(null);
-  const [replyText, setReplyText] = useState('');
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [apiError, setApiError] = useState(null);
@@ -511,11 +510,13 @@ function ConcernUser({ onLogout, onNavigate }) {
                <div className="empty-state">
                  <LoadingSpinner label="Loading your concerns..." />
                </div>
-             ) : concerns.length === 0 ? (
-               <div className="empty-state">
-                 <p>No concerns submitted yet. Submit a new concern to get started.</p>
-               </div>
-             ) : selectedConcern ? (
+             ) : (() => {
+               const activeConcerns = concerns.filter(c => c.status !== 'resolved' && c.status !== 'cancelled');
+               return activeConcerns.length === 0 ? (
+                 <div className="empty-state">
+                   <p>No active concerns. Submit a new concern to get started.</p>
+                 </div>
+               ) : selectedConcern ? (
               <div className="concern-detail-view">
                 <button className="back-button" onClick={() => setSelectedConcern(null)}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -561,66 +562,20 @@ function ConcernUser({ onLogout, onNavigate }) {
                     </div>
                   ))}
                 </div>
-                {selectedConcern.userReplyCount < 3 && (
-                  <div className="reply-section">
-                    <textarea
-                      className="reply-input"
-                      placeholder="Type your message..."
-                      value={replyText}
-                      onChange={(e) => setReplyText(e.target.value)}
-                      rows="3"
-                    />
-                    <button
-                      className="send-button"
-                      onClick={() => {
-                        if (!replyText.trim()) return;
-                        const newMessage = {
-                          sender: 'citizen',
-                          name: 'You',
-                          timestamp: new Date().toLocaleString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric',
-                            hour: 'numeric',
-                            minute: '2-digit',
-                          }),
-                          content: replyText,
-                        };
-                        setConcerns((prev) =>
-                          prev.map((c) =>
-                            c.id === selectedConcern.id
-                              ? {
-                                  ...c,
-                                  messages: [...c.messages, newMessage],
-                                  userReplyCount: c.userReplyCount + 1,
-                                }
-                              : c
-                          )
-                        );
-                        setSelectedConcern({
-                          ...selectedConcern,
-                          messages: [...selectedConcern.messages, newMessage],
-                          userReplyCount: selectedConcern.userReplyCount + 1,
-                        });
-                        setReplyText('');
-                      }}
-                    >
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <line x1="22" y1="2" x2="11" y2="13" />
-                        <polygon points="22 2 15 22 11 13 2 9 22 2" />
-                      </svg>
-                    </button>
-                  </div>
-                )}
-                {selectedConcern.userReplyCount >= 3 && (
-                  <div className="reply-limit-notice">
-                    <p>You have reached the maximum of 3 replies for this concern. Please wait for admin response.</p>
-                  </div>
-                )}
+                <div className="reply-section-info">
+                  <p className="info-message">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" y1="16" x2="12" y2="12" />
+                      <line x1="12" y1="8" x2="12.01" y2="8" />
+                    </svg>
+                    You can view admin responses here, but cannot reply directly. Please wait for the admin's next update.
+                  </p>
+                </div>
               </div>
             ) : (
               <div className="concern-cards">
-                {concerns.map((concern) => (
+                {activeConcerns.map((concern) => (
                   <div key={concern.id} className="concern-card" onClick={() => setSelectedConcern(concern)}>
                     <div className="card-left">
                       <div className="concern-icon">
@@ -678,12 +633,13 @@ function ConcernUser({ onLogout, onNavigate }) {
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-      </main>
+                  ))}
+                  </div>
+                  );
+                  })()}
+                  </div>
+                  )}
+                  </main>
     </div>
   );
 }
