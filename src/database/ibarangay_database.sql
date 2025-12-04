@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 04, 2025 at 07:02 AM
+-- Generation Time: Dec 04, 2025 at 11:41 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -6344,9 +6344,18 @@ CREATE TABLE `contactus` (
   `ContactUsID` int(11) NOT NULL,
   `Name` varchar(100) NOT NULL,
   `Email` varchar(100) NOT NULL,
+  `Phone` bigint(11) NOT NULL,
   `Message` longtext NOT NULL,
   `CreatedAt` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `contactus`
+--
+
+INSERT INTO `contactus` (`ContactUsID`, `Name`, `Email`, `Phone`, `Message`, `CreatedAt`) VALUES
+(1, 'zac randolph ragas', 'zacra9as@gmail.com', 9616179446, 'helooo', '2025-12-04 10:35:18'),
+(2, 'zac randolph ragas', 'zacra9as@gmail.com', 9616179446, 'dwadjawoidjoiawjdowajdoiaodjwdkjajkdokawjdojasfdjeopfmdfeoifoiwejfopmfomkfeflkemfoksemfo[ksmfpwemfkmweofmweokfmowkemfkowemflkwfmwe\n', '2025-12-04 10:39:44');
 
 -- --------------------------------------------------------
 
@@ -6739,7 +6748,7 @@ ALTER TABLE `activity_log`
 -- AUTO_INCREMENT for table `contactus`
 --
 ALTER TABLE `contactus`
-  MODIFY `ContactUsID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ContactUsID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables

@@ -1350,6 +1350,91 @@ app.post('/api/reset-password', async (req, res) => {
     }
 });
 
+// Contact Us endpoints
+app.post('/api/contactus', async (req, res) => {
+    let connection;
+    try {
+        const { name, email, phone, message } = req.body;
+
+        // Validate required fields
+        if (!name || !email || !message) {
+            return res.status(400).json({ 
+                error: 'Name, email, and message are required' 
+            });
+        }
+
+        connection = await pool.getConnection();
+        
+        // Generate ID
+        const ContactUsID = await generateID(connection, 'contactus', 'ContactUsID', 'contact');
+        
+        // Insert contact message
+        await connection.query(
+            'INSERT INTO contactus (ContactUsID, Name, Email, Phone, Message, CreatedAt) VALUES (?, ?, ?, ?, ?, NOW())',
+            [ContactUsID, name, email, phone || null, message]
+        );
+        
+        connection.release();
+        
+        console.log(`✅ Contact message submitted: ${ContactUsID}`);
+        res.status(201).json({ 
+            success: true,
+            message: 'Thank you for reaching out. We will get back to you shortly.',
+            ContactUsID 
+        });
+    } catch (error) {
+        if (connection) connection.release();
+        console.error('❌ Error submitting contact message:', error.message);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Get all contact messages (for super admin)
+app.get('/api/contactus', async (req, res) => {
+    let connection;
+    try {
+        connection = await pool.getConnection();
+        
+        const [messages] = await connection.query(
+            'SELECT * FROM contactus ORDER BY CreatedAt DESC LIMIT 100'
+        );
+        
+        connection.release();
+        res.json(messages);
+    } catch (error) {
+        if (connection) connection.release();
+        console.error('❌ Error fetching contact messages:', error.message);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Delete contact message
+app.delete('/api/contactus/:id', async (req, res) => {
+    let connection;
+    try {
+        const { id } = req.params;
+        
+        connection = await pool.getConnection();
+        
+        const [result] = await connection.query(
+            'DELETE FROM contactus WHERE ContactUsID = ?',
+            [id]
+        );
+        
+        connection.release();
+        
+        if (result.affectedRows > 0) {
+            res.json({ success: true, message: 'Contact message deleted successfully' });
+        } else {
+            res.status(404).json({ error: 'Contact message not found' });
+        }
+    } catch (error) {
+        if (connection) connection.release();
+        console.error('❌ Error deleting contact message:', error.message);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.get('/api/health', (req, res) => {
     res.json({ status: 'ok' });
 });

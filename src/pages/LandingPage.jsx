@@ -146,15 +146,45 @@ function LandingPage({ onNavigateLogin, onNavigateAdminLogin }) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    setFormStatus('Thanks for reaching out! We will get back to you shortly.');
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      message: '',
-    });
+    setFormStatus('Sending your message...');
+    
+    try {
+      const response = await fetch('/api/contactus', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone || null,
+          message: formData.message,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to submit contact form');
+      }
+
+      setFormStatus('Thanks for reaching out! We will get back to you shortly.');
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        message: '',
+      });
+
+      // Clear success message after 5 seconds
+      setTimeout(() => setFormStatus(''), 5000);
+    } catch (error) {
+      console.error('Error submitting contact form:', error);
+      setFormStatus(`Error: ${error.message}`);
+      setTimeout(() => setFormStatus(''), 5000);
+    }
   };
 
   const handleLoginClick = (event) => {

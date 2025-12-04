@@ -404,6 +404,20 @@
   color: #475569;
 }
 
+.message-cell {
+  max-width: 400px;
+  word-wrap: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+.message-preview {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #475569;
+  line-height: 1.4;
+}
+
 .empty-message {
   text-align: center;
   color: #94a3b8;
@@ -624,7 +638,7 @@ tr.conflict:hover {
 
 .barangays-list h3 {
   margin-top: 0;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
   font-size: 1rem;
   color: #111c32;
   font-weight: 700;
@@ -781,4 +795,69 @@ tr.conflict:hover {
     width: 18px;
     height: 18px;
   }
+}
+
+/* Filter Controls */
+.filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  margin-top: -4px;
+}
+
+.filter-controls label {
+  font-weight: 500;
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+.filter-select,
+.sort-select {
+  padding: 8px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  background: #fff;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.filter-select:hover,
+.sort-select:hover {
+  border-color: #3862ff;
+  box-shadow: 0 2px 4px rgba(56, 98, 255, 0.1);
+}
+
+.filter-select:focus,
+.sort-select:focus {
+  outline: none;
+  border-color: #3862ff;
+  box-shadow: 0 0 0 3px rgba(56, 98, 255, 0.1);
+}
+
+.filter-result-count {
+  margin-left: auto;
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.sort-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: -4px;
+  margin-bottom: 16px;
+}
+
+.sort-controls label {
+  font-weight: 500;
+  color: #374151;
+  font-size: 0.9rem;
 }

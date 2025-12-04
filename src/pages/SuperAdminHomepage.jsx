@@ -9,9 +9,12 @@ function SuperAdminHomepage({ onLogout }) {
   const [users, setUsers] = useState([]);
   const [admins, setAdmins] = useState([]);
   const [barangays, setBarangays] = useState([]);
+  const [contactMessages, setContactMessages] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [barangayAdminMap, setBarangayAdminMap] = useState({});
+  const [barangaySort, setBarangaySort] = useState('asc'); // 'asc' or 'desc'
+  const [contactMessageFilter, setContactMessageFilter] = useState('all'); // 'all', 'today', 'week', 'month'
   const [formData, setFormData] = useState({
     barangayName: '',
     municipality: '',
@@ -39,12 +42,13 @@ function SuperAdminHomepage({ onLogout }) {
     fetchUsers();
     fetchAdmins();
     fetchBarangays();
+    fetchContactMessages();
   }, []);
 
   const handleRefreshData = async () => {
     setRefreshing(true);
     try {
-      await Promise.all([fetchUsers(), fetchAdmins(), fetchBarangays()]);
+      await Promise.all([fetchUsers(), fetchAdmins(), fetchBarangays(), fetchContactMessages()]);
     } finally {
       setRefreshing(false);
     }
@@ -125,6 +129,17 @@ function SuperAdminHomepage({ onLogout }) {
     }
   };
 
+  const fetchContactMessages = async () => {
+    try {
+      const response = await fetch('/api/contactus');
+      if (!response.ok) throw new Error('Failed to fetch contact messages');
+      const data = await response.json();
+      setContactMessages(data);
+    } catch (error) {
+      console.error('Failed to fetch contact messages:', error);
+    }
+  };
+
   const filteredUsers = users.filter(
     (user) =>
       user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -139,6 +154,34 @@ function SuperAdminHomepage({ onLogout }) {
       admin.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
       admin.phone.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const getFilteredContactMessages = () => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const oneWeekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const oneMonthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+    return contactMessages.filter((msg) => {
+      const msgDate = new Date(msg.CreatedAt);
+      const msgDay = new Date(msgDate.getFullYear(), msgDate.getMonth(), msgDate.getDate());
+
+      if (contactMessageFilter === 'today') {
+        return msgDay.getTime() === today.getTime();
+      } else if (contactMessageFilter === 'week') {
+        return msgDate >= oneWeekAgo;
+      } else if (contactMessageFilter === 'month') {
+        return msgDate >= oneMonthAgo;
+      }
+      return true; // 'all'
+    }).filter(
+      (msg) =>
+        msg.Name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        msg.Email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        msg.Message.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  };
+
+  const filteredContactMessages = getFilteredContactMessages();
 
   const handleApproveAdmin = async (adminId) => {
     const admin = admins.find((a) => a.id === adminId);
@@ -239,6 +282,24 @@ function SuperAdminHomepage({ onLogout }) {
       } catch (error) {
         console.error('Error deleting user:', error);
         alert('Failed to delete user');
+      }
+    }
+  };
+
+  const handleDeleteContactMessage = async (messageId) => {
+    if (window.confirm('Are you sure you want to delete this contact message?')) {
+      try {
+        const response = await fetch(`/api/contactus/${messageId}`, {
+          method: 'DELETE'
+        });
+        
+        if (!response.ok) throw new Error('Failed to delete message');
+        
+        setContactMessages((prev) => prev.filter((msg) => msg.ContactUsID !== messageId));
+        alert('Message deleted successfully');
+      } catch (error) {
+        console.error('Error deleting message:', error);
+        alert('Failed to delete message');
       }
     }
   };
@@ -354,6 +415,16 @@ function SuperAdminHomepage({ onLogout }) {
           </svg>
           Add Barangay
           <span className="tab-badge">{barangays.length}</span>
+        </button>
+        <button
+          className={`tab-menu-btn ${activeTab === 'contact' ? 'active' : ''}`}
+          onClick={() => setActiveTab('contact')}
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>
+          Contact Messages
+          <span className="tab-badge">{contactMessages.length}</span>
         </button>
       </div>
 
@@ -583,12 +654,34 @@ function SuperAdminHomepage({ onLogout }) {
             </div>
 
             <div className="barangays-list">
-              <h3>Existing Barangays ({barangays.length})</h3>
+              <div className="sort-controls">
+                <label htmlFor="sort-barangay">Sort by Name:</label>
+                <select 
+                  id="sort-barangay"
+                  value={barangaySort} 
+                  onChange={(e) => setBarangaySort(e.target.value)}
+                  className="sort-select"
+                >
+                  <option value="asc">Ascending (A-Z)</option>
+                  <option value="desc">Descending (Z-A)</option>
+                </select>
+              </div>
+              <div className="barangay-list-header">
+                <h3>Existing Barangays ({barangays.length})</h3>
+              </div>
               {barangays.length === 0 ? (
                 <p className="empty-message">No barangays found</p>
               ) : (
                 <div className="barangays-grid">
-                  {barangays.map((barangay) => (
+                  {[...barangays]
+                    .sort((a, b) => {
+                      if (barangaySort === 'asc') {
+                        return a.BarangayName.localeCompare(b.BarangayName);
+                      } else {
+                        return b.BarangayName.localeCompare(a.BarangayName);
+                      }
+                    })
+                    .map((barangay) => (
                     <div key={barangay.BarangayID} className="barangay-card">
                       <h4>{barangay.BarangayName}</h4>
                       <p><strong>ID:</strong> {barangay.BarangayID}</p>
@@ -597,6 +690,76 @@ function SuperAdminHomepage({ onLogout }) {
                     </div>
                   ))}
                 </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'contact' && (
+          <div className="table-section">
+            <div className="section-header">
+              <h2 className="section-title">Contact Messages</h2>
+              <span className="badge-count">{contactMessages.length}</span>
+            </div>
+            <div className="filter-controls">
+              <label htmlFor="contact-filter">Filter by Date:</label>
+              <select 
+                id="contact-filter"
+                value={contactMessageFilter} 
+                onChange={(e) => setContactMessageFilter(e.target.value)}
+                className="filter-select"
+              >
+                <option value="all">All Messages</option>
+                <option value="today">Today</option>
+                <option value="week">Past 7 Days</option>
+                <option value="month">Past 30 Days</option>
+              </select>
+              <span className="filter-result-count">{filteredContactMessages.length} message(s)</span>
+            </div>
+            <div className="table-wrapper">
+              {contactMessages.length === 0 ? (
+                <p className="empty-message">No contact messages found</p>
+              ) : filteredContactMessages.length === 0 ? (
+                <p className="empty-message">No messages match your filters</p>
+              ) : (
+                <table className="accounts-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Phone</th>
+                      <th>Message</th>
+                      <th>Date</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredContactMessages.map((msg) => (
+                      <tr key={msg.ContactUsID}>
+                        <td className="name-cell">{msg.Name}</td>
+                        <td className="email-cell">{msg.Email}</td>
+                        <td className="phone-cell">{msg.Phone || 'N/A'}</td>
+                        <td className="message-cell">
+                          <p className="message-preview">{msg.Message}</p>
+                        </td>
+                        <td className="date-cell">
+                          {new Date(msg.CreatedAt).toLocaleDateString()} {new Date(msg.CreatedAt).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
+                        </td>
+                        <td>
+                          <div className="action-buttons">
+                            <button
+                              className="btn-delete"
+                              onClick={() => handleDeleteContactMessage(msg.ContactUsID)}
+                              title="Delete this message"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               )}
             </div>
           </div>
