@@ -1,0 +1,68 @@
+/* Loading Spinner - Consistent with Landing Page Design */
+
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.spinner-inner {
+  position: relative;
+  width: 40px;
+  height: 40px;
+}
+
+.spinner-small .spinner-inner {
+  width: 24px;
+  height: 24px;
+}
+
+.spinner-large .spinner-inner {
+  width: 60px;
+  height: 60px;
+}
+
+.spinner-ring {
+  position: absolute;
+  inset: 0;
+  border: 3px solid transparent;
+  border-top-color: #3862ff;
+  border-right-color: #3862ff;
+  border-radius: 50%;
+  animation: spin 1.2s linear infinite;
+}
+
+.spinner-ring:nth-child(2) {
+  inset: 6px;
+  border-top-color: #6f8fff;
+  animation-delay: -0.4s;
+  border-right-color: transparent;
+}
+
+.spinner-ring:nth-child(3) {
+  inset: 12px;
+  border-top-color: #a5bfff;
+  animation-delay: -0.8s;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner-label {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #4b5670;
+  font-weight: 500;
+}

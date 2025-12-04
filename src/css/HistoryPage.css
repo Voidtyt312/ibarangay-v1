@@ -1,0 +1,53 @@
+.history-page {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 0;
+  min-height: 100vh;
+  padding: 0;
+  background: #edf1fb;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden;
+  transition: grid-template-columns 0.3s ease;
+}
+
+.history-page:has(.sidebar.collapsed) {
+  grid-template-columns: 92px 1fr;
+}
+
+.history-page .sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  align-self: start;
+}
+
+.history-main {
+  overflow-y: auto;
+  height: 100vh;
+  padding: 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+@media (max-width: 1200px) {
+  .history-page {
+    grid-template-columns: 1fr;
+    overflow: visible;
+    padding: 22px;
+    gap: 18px;
+  }
+
+  .history-page .sidebar {
+    position: static;
+    height: auto;
+    max-height: none;
+    width: 100%;
+  }
+
+  .history-main {
+    max-height: none;
+    overflow: visible;
+  }
+}
+

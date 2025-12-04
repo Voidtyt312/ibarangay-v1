@@ -1,0 +1,356 @@
+.emergency-user-page {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 0;
+  min-height: 100vh;
+  padding: 0;
+  background: #edf1fb;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden;
+  transition: grid-template-columns 0.3s ease;
+}
+
+.emergency-user-page:has(.sidebar.collapsed) {
+  grid-template-columns: 92px 1fr;
+}
+
+.emergency-user-page .sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  align-self: start;
+}
+
+.emergency-content {
+  padding: 20px 18px;
+  overflow-y: auto;
+  height: 100vh;
+  box-sizing: border-box;
+  transition: margin-left 0.3s ease;
+}
+
+/* consistent normal text and label sizing to match landing page scale */
+.emergency-content,
+.contact-card,
+.national-card,
+.tip-card,
+.card-content {
+  font-size: 0.855rem;
+}
+
+.emergency-header p,
+.contact-info p,
+.national-info p,
+.tip-card p {
+  font-size: 0.81rem;
+}
+
+.emergency-header {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  margin-bottom: 22px;
+  padding: 18px 20px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #ffffff;
+}
+
+.header-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.header-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.emergency-header h1 {
+  margin: 0 0 8px;
+  font-size: 1.8rem;
+  color: #ffffff;
+}
+
+.emergency-header p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+}
+
+.barangay-contacts,
+.national-contacts {
+  margin-bottom: 32px;
+}
+
+.barangay-contacts h2,
+.national-contacts h2 {
+  margin: 0 0 20px;
+  font-size: 1.5rem;
+  color: #111c32;
+  text-align: center;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.contact-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.contact-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 40px rgba(15, 23, 42, 0.1);
+}
+
+.contact-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.contact-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.contact-info h3 {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+  color: #111c32;
+}
+
+.contact-info p {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.call-btn {
+  border: none;
+  border-radius: 14px;
+  padding: 10px 20px;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  min-width: 200px;
+}
+
+.call-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.call-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.national-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.national-card {
+  background: #ffffff;
+  border-radius: 13px;
+  padding: 16px 19px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.national-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 40px rgba(15, 23, 42, 0.1);
+}
+
+.national-info h3 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  color: #111c32;
+}
+
+.national-info p {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.national-call-btn {
+  border: none;
+  border-radius: 14px;
+  padding: 14px 24px;
+  background: #3b82f6;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 12px 24px rgba(59, 130, 246, 0.3);
+  min-width: 200px;
+}
+
+.national-call-btn:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
+
+.national-call-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.emergency-tips {
+  margin-top: 48px;
+}
+
+.emergency-tips h2 {
+  margin: 0 0 24px;
+  font-size: 1.5rem;
+  color: #111c32;
+  text-align: center;
+}
+
+.tips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.tip-card {
+  background: #ffffff;
+  border-radius: 13px;
+  padding: 19px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid #e2e8f0;
+}
+
+.tip-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 40px rgba(15, 23, 42, 0.1);
+}
+
+.tip-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.tip-card h3 {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+  color: #111c32;
+}
+
+.tip-card p {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 1200px) {
+  .emergency-user-page {
+    grid-template-columns: 1fr;
+    overflow: visible;
+  }
+
+  .emergency-user-page .sidebar {
+    position: static;
+    height: auto;
+    max-height: none;
+    width: 100%;
+  }
+
+  .emergency-content {
+    max-height: none;
+    overflow: visible;
+  }
+}
+
+@media (max-width: 768px) {
+  .emergency-user-page {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .emergency-content {
+    padding: 24px;
+    border-radius: 20px;
+  }
+
+  .emergency-header {
+    padding: 24px;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .emergency-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .national-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .national-call-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .emergency-content {
+    padding: 20px;
+  }
+
+  .emergency-header {
+    padding: 20px;
+  }
+
+  .emergency-header h1 {
+    font-size: 1.3rem;
+  }
+}
+
