@@ -52,6 +52,7 @@
 
 .collapse-toggle:hover {
   background: rgba(255, 255, 255, 0.25);
+ 
 }
 
 .sidebar-logo {
@@ -108,7 +109,7 @@
 }
 
 .sidebar nav button {
-  width: 100%;
+
   border: none;
   border-radius: 10px;
   padding: 8px 10px;
@@ -124,6 +125,30 @@
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
+}
+
+.collapse-toggle-s {
+ 
+  border: none;
+  border-radius: 10px;
+  padding: 8px 10px;
+  background: transparent;
+  color: inherit;
+  font-weight: 600;
+  font-size: 0.8rem;
+  
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+
+.sidebar button{
+  width: 170px;
 }
 
 .sidebar nav button .icon {

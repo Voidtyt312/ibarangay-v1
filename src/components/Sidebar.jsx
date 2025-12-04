@@ -268,7 +268,7 @@ function Sidebar({ activeItem = 'newsfeed', onNavigate, onLogout, isAdmin = fals
   return (
     <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
       <button
-        className="collapse-toggle"
+        className="collapse-toggle-s"
         type="button"
         aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         onClick={() => setCollapsed((prev) => !prev)}
